@@ -1,0 +1,4 @@
+D:\Web\ReactCSharp\React_NET_Core\FirstApp\reactapp\obj\Debug\reactapp.esproj.SuggestedBindingRedirects.cache
+D:\Web\ReactCSharp\React_NET_Core\FirstApp\reactapp\obj\Debug\reactapp.esproj.CoreCompileInputs.cache
+D:\Web\01_ReactCSharp\React_NET_Core\FirstApp\reactapp\obj\Debug\reactapp.esproj.SuggestedBindingRedirects.cache
+D:\Web\01_ReactCSharp\React_NET_Core\FirstApp\reactapp\obj\Debug\reactapp.esproj.CoreCompileInputs.cache
