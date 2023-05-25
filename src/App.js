@@ -1,69 +1,88 @@
-import React, { Component } from "react";
+import PropTypes from "prop-types";
+import React from "react";
+import dotenv from "dotenv";
+import { Switch, BrowserRouter as Router } from "react-router-dom";
+import { connect } from "react-redux";
+import {
+  userRoutes,
+  authRoutes,
+  mainRoutes,
+  adminRoutes,
+} from "./routes/allRoutes";
+import Authmiddleware from "./routes/middleware/Authmiddleware";
+import Adminmiddleware from "./routes/middleware/Adminmiddleware";
+import HorizontalLayout from "./components/HorizontalLayout/";
+import VerticalLayout from "./components/VerticalLayout/";
+import NonAuthLayout from "./components/NonAuthLayout";
 
-export default class App extends Component {
-  static displayName = App.name;
+import "antd/dist/reset.css";
+import "./assets/scss/theme.scss";
+import "./assets/scss/preloader.scss";
 
-  constructor(props) {
-    super(props);
-    this.state = { forecasts: [], loading: true };
-  }
+dotenv.config();
 
-  componentDidMount() {
-    this.populateWeatherData();
-  }
-
-  static renderForecastsTable(forecasts) {
-    return (
-      <table className="table table-striped" aria-labelledby="tabelLabel">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Temp. (C)</th>
-            <th>Temp. (F)</th>
-            <th>Summary</th>
-          </tr>
-        </thead>
-        <tbody>
-          {forecasts.map((forecast) => (
-            <tr key={forecast.date}>
-              <td>{forecast.date}</td>
-              <td>{forecast.temperatureC}</td>
-              <td>{forecast.temperatureF}</td>
-              <td>{forecast.summary}</td>
-            </tr>
+const App = (props) => {
+  return (
+    <React.Fragment>
+      <Router>
+        <Switch>
+          {authRoutes.map((route, idx) => (
+            <Authmiddleware
+              path={route.path}
+              layout={NonAuthLayout}
+              component={route.component}
+              key={idx}
+              isAuthProtected={false}
+              exact
+            />
           ))}
-        </tbody>
-      </table>
-    );
-  }
 
-  render() {
-    let contents = this.state.loading ? (
-      <p>
-        <em>
-          Loading... Please refresh once the ASP.NET backend has started. See{" "}
-          <a href="https://aka.ms/jspsintegrationreact">
-            https://aka.ms/jspsintegrationreact
-          </a>{" "}
-          for more details.
-        </em>
-      </p>
-    ) : (
-      App.renderForecastsTable(this.state.forecasts)
-    );
+          {userRoutes.map((route, idx) => (
+            <Authmiddleware
+              path={route.path}
+              layout={HorizontalLayout}
+              component={route.component}
+              key={idx}
+              isAuthProtected={true}
+              exact
+            />
+          ))}
 
-    return (
-      <div>
-        <h1 id="tabelLabel">Weather forecast</h1>
-        <p>This component demonstrates fetching data from the server.</p>
-        {contents}
-      </div>
-    );
-  }
+          {mainRoutes.map((route, idx) => (
+            <Authmiddleware
+              path={route.path}
+              layout={HorizontalLayout}
+              component={route.component}
+              key={idx}
+              isAuthProtected={false}
+              exact
+            />
+          ))}
 
-  async populateWeatherData() {
-    const response = await fetch("weatherforecast");
-    const data = await response.json();
-    this.setState({ forecasts: data, loading: false });
-  }
-}
+          {adminRoutes.map((route, idx) => (
+            <Adminmiddleware
+              path={route.path}
+              layout={VerticalLayout}
+              component={route.component}
+              key={idx}
+              isAdminProtected={true}
+              exact
+            />
+          ))}
+        </Switch>
+      </Router>
+    </React.Fragment>
+  );
+};
+
+App.propTypes = {
+  layout: PropTypes.any,
+};
+
+const mapStateToProps = (state) => {
+  return {
+    layout: state.Layout,
+  };
+};
+
+export default connect(mapStateToProps, null)(App);
